@@ -1,4 +1,21 @@
-# React + Vite
+# Smart Saving Food - MERN Stack Application
+
+🚀 **Live Demo**: https://utkarshchauhan763.github.io/smart-saving-food/
+
+A modern web application built with the MERN stack to help reduce food waste and promote smart food saving habits.
+
+## 🌟 Features
+- User-friendly interface built with React + Vite
+- Responsive design with Tailwind CSS  
+- MongoDB database integration
+- Express.js backend API
+- Automatic deployment with GitHub Pages
+
+## 🛠️ Tech Stack
+- **Frontend**: React, Vite, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Deployment**: GitHub Pages with Actions
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
