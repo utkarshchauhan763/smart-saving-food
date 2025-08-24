@@ -11,6 +11,9 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Check if running in demo mode
+  const isDemoMode = window.location.hostname.includes('github.io');
+
   // Check authentication on app load
   useEffect(() => {
     const user = authUtils.getCurrentUser();
@@ -40,6 +43,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Demo Mode Banner */}
+      {isDemoMode && (
+        <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm">
+          🎭 <strong>Demo Mode</strong> - This is a frontend-only demo using mock data. 
+          Try login with any email/password! Admin demo: admin@example.com / admin123
+        </div>
+      )}
+      
       {/* Navigation */}
       <nav className="bg-blue-600 text-white p-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center">

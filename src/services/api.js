@@ -1,5 +1,21 @@
 // API Service Layer for Smart Saving Food App
+import { 
+  mockAuthAPI, 
+  mockMenuAPI, 
+  mockPreferencesAPI, 
+  mockNotificationsAPI, 
+  mockAdminAPI, 
+  mockAuthUtils 
+} from './mockApi.js';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
+// Check if we're in demo mode (GitHub Pages or no backend)
+const isDemoMode = () => {
+  return window.location.hostname.includes('github.io') || 
+         import.meta.env.VITE_DEMO_MODE === 'true' ||
+         !import.meta.env.VITE_API_BASE_URL;
+};
 
 // Helper function to get auth token
 const getAuthToken = () => {
@@ -24,38 +40,65 @@ const handleResponse = async (response) => {
   return data;
 };
 
+// Enhanced API call with fallback to mock
+const apiCall = async (apiFunction, mockFunction, ...args) => {
+  if (isDemoMode()) {
+    console.log('🎭 Demo Mode: Using mock data');
+    return await mockFunction(...args);
+  }
+  
+  try {
+    return await apiFunction(...args);
+  } catch (error) {
+    console.warn('API call failed, falling back to mock data:', error.message);
+    return await mockFunction(...args);
+  }
+};
+
 // Authentication API
 export const authAPI = {
   // Register user
   register: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      return handleResponse(response);
+    };
+    
+    return await apiCall(realApiCall, mockAuthAPI.register, userData);
   },
 
   // Login user
   login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+      return handleResponse(response);
+    };
+    
+    return await apiCall(realApiCall, mockAuthAPI.login, credentials);
   },
 
   // Get current user profile
   getProfile: async () => {
-    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
-      headers: getAuthHeaders(),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    };
+    
+    return await apiCall(realApiCall, mockAuthAPI.getProfile);
   }
 };
 
@@ -63,52 +106,67 @@ export const authAPI = {
 export const menuAPI = {
   // Get today's menu
   getTodayMenu: async () => {
-    const response = await fetch(`${API_BASE_URL}/menu/today`, {
-      headers: getAuthHeaders(),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/menu/today`, {
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    };
+    return await apiCall(realApiCall, mockMenuAPI.getTodayMenu);
   },
 
   // Get menu by date
   getMenuByDate: async (date) => {
-    const response = await fetch(`${API_BASE_URL}/menu/date/${date}`, {
-      headers: getAuthHeaders(),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/menu/date/${date}`, {
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    };
+    return await apiCall(realApiCall, mockMenuAPI.getMenuByDate, date);
   },
 
   // Create/Update menu (Admin only)
   createMenu: async (menuData) => {
-    const response = await fetch(`${API_BASE_URL}/menu`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(menuData),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/menu`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(menuData),
+      });
+      return handleResponse(response);
+    };
+    return await apiCall(realApiCall, mockMenuAPI.createMenu, menuData);
   },
 
   // Update menu (Admin only)
   updateMenu: async (id, menuData) => {
-    const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(menuData),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(menuData),
+      });
+      return handleResponse(response);
+    };
+    return await apiCall(realApiCall, mockMenuAPI.updateMenu, id, menuData);
   },
 
   // Delete menu (Admin only)
   deleteMenu: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(),
-    });
-    return handleResponse(response);
+    const realApiCall = async () => {
+      const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    };
+    return await apiCall(realApiCall, mockMenuAPI.deleteMenu, id);
   }
 };
 
 // Preferences API
-export const preferencesAPI = {
+export const preferencesAPI = isDemoMode() ? mockPreferencesAPI : {
   // Save meal preferences
   savePreferences: async (preferences) => {
     const response = await fetch(`${API_BASE_URL}/preferences`, {
@@ -137,7 +195,7 @@ export const preferencesAPI = {
 };
 
 // Notifications API
-export const notificationsAPI = {
+export const notificationsAPI = isDemoMode() ? mockNotificationsAPI : {
   // Get user notifications
   getUserNotifications: async () => {
     const response = await fetch(`${API_BASE_URL}/notifications/user`, {
@@ -167,7 +225,7 @@ export const notificationsAPI = {
 };
 
 // Admin API
-export const adminAPI = {
+export const adminAPI = isDemoMode() ? mockAdminAPI : {
   // Get dashboard stats
   getDashboard: async () => {
     const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
@@ -267,7 +325,7 @@ export const adminAPI = {
 };
 
 // Auth utility functions
-export const authUtils = {
+export const authUtils = isDemoMode() ? mockAuthUtils : {
   // Store user data and token
   setAuthData: (token, user) => {
     localStorage.setItem('token', token);
