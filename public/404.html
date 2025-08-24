@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Saving Food</title>
+  <script>
+    // GitHub Pages SPA redirect
+    const path = window.location.pathname.slice('/smart-saving-food'.length);
+    if (path && path !== '/') {
+      window.history.replaceState({}, '', '/smart-saving-food' + path);
+    }
+    window.location.replace('/smart-saving-food/');
+  </script>
+</head>
+<body>
+  <div>Redirecting...</div>
+</body>
+</html>
