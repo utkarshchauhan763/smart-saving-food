@@ -12,8 +12,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 
 // Check if we're in demo mode (GitHub Pages or no backend)
 const isDemoMode = () => {
-  return window.location.hostname.includes('github.io') || 
-         import.meta.env.VITE_DEMO_MODE === 'true' ||
+  // If there's a production API URL set, use real backend
+  if (import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.includes('railway.app')) {
+    return false; // Use real backend
+  }
+  
+  // Demo mode for GitHub Pages without backend
+  return window.location.hostname.includes('github.io') && 
          !import.meta.env.VITE_API_BASE_URL;
 };
 
